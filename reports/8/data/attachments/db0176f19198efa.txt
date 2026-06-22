@@ -1,0 +1,6 @@
+INFO     ui_test:conftest.py:34 浏览器已启动（无头模式）
+INFO     ui_test:test_login.py:25 开始测试: 自动识别验证码登录
+INFO     ui_test:base_page.py:22 导航到: https://mes.jaka.com/
+INFO     ui_test:login_page.py:71 第 1 次尝试，验证码识别结果: tqsyf
+INFO     ui_test:login_page.py:78 第 1 次尝试登录成功！当前 URL: https://mes.jaka.com/#/
+INFO     ui_test:test_login.py:35 测试通过: 自动识别验证码登录，已成功进入首页
