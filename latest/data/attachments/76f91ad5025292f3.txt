@@ -1,0 +1,4 @@
+[2026-06-23 10:10:20] [INFO] [ui_test] 开始测试: 自动识别验证码登录
+[2026-06-23 10:10:20] [INFO] [ui_test] 导航到: https://mes.jaka.com/
+[2026-06-23 10:10:50] [ERROR] [ui_test] 测试失败，自动截图: testcases_test_login.py_TestLogin_test_login[\u81ea\u52a8\u8bc6\u522b\u9a8c\u8bc1\u7801\u767b\u5f55]
+[2026-06-23 10:11:17] [INFO] [ui_test] 截图已保存: /home/runner/work/ui_by_playwright/ui_by_playwright/screenshots/testcases_test_login.py_TestLogin_test_login[\u81ea\u52a8\u8bc6\u522b\u9a8c\u8bc1\u7801\u767b\u5f55]_20260623_101050.png
