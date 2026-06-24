@@ -1,0 +1,3 @@
+"Status","Start Time","Stop Time","Duration in ms","Parent Suite","Suite","Sub Suite","Test Class","Test Method","Name","Description"
+"passed","Wed Jun 24 09:57:41 UTC 2026","Wed Jun 24 09:57:52 UTC 2026","10845","testcases","test_login","TestLogin","","","test_login[\u81ea\u52a8\u8bc6\u522b\u9a8c\u8bc1\u7801\u767b\u5f55]","自动识别验证码登录，失败则重试直到成功"
+"passed","Wed Jun 24 09:57:52 UTC 2026","Wed Jun 24 09:58:03 UTC 2026","11905","testcases","test_order","TestOrder","","","test_order","登录后搜索计划编号，验证查询结果包含关键字"
