@@ -1,0 +1,9 @@
+INFO     ui_test:conftest.py:34 浏览器已启动（无头模式）
+INFO     ui_test:test_login.py:25 开始测试: 自动识别验证码登录
+INFO     ui_test:base_page.py:22 导航到: https://mes.jaka.com/
+INFO     ui_test:login_page.py:71 第 1 次尝试，验证码识别结果: 9zw6
+WARNING  ui_test:login_page.py:83 第 1 次登录失败，提示: 输入验证码有误!，刷新重试...
+INFO     ui_test:screenshot.py:26 截图已保存: /home/runner/work/ui_by_playwright/ui_by_playwright/screenshots/登录重试第1次失败_20260626_095844.png
+INFO     ui_test:login_page.py:71 第 2 次尝试，验证码识别结果: ubqng
+INFO     ui_test:login_page.py:78 第 2 次尝试登录成功！当前 URL: https://mes.jaka.com/#/
+INFO     ui_test:test_login.py:35 测试通过: 自动识别验证码登录，已成功进入首页
