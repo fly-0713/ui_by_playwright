@@ -1,0 +1,10 @@
+INFO     ui_test:test_order.py:20 开始测试: 计划订单搜索
+INFO     ui_test:base_page.py:22 导航到: https://mes.jaka.com/
+INFO     ui_test:login_page.py:71 第 1 次尝试，验证码识别结果: 9dbd3
+INFO     ui_test:login_page.py:78 第 1 次尝试登录成功！当前 URL: https://mes.jaka.com/#/
+INFO     ui_test:order_page.py:27 导航到计划订单页面
+INFO     ui_test:order_page.py:33 已进入计划订单页面, URL: https://mes.jaka.com/#/plan/index
+INFO     ui_test:order_page.py:37 搜索计划编号: test
+INFO     ui_test:order_page.py:71 表头 '计划编号' 在第 5 列
+INFO     ui_test:order_page.py:93 计划编号列表: []
+INFO     ui_test:conftest.py:38 浏览器已关闭
