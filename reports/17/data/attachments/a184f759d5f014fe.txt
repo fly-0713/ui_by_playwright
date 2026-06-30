@@ -1,0 +1,3 @@
+INFO     ui_test:conftest.py:34 浏览器已启动（无头模式）
+INFO     ui_test:test_login.py:25 开始测试: 自动识别验证码登录
+INFO     ui_test:base_page.py:22 导航到: https://mes.jaka.com/
