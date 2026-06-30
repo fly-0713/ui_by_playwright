@@ -1,0 +1,4 @@
+[2026-06-30 10:11:06] [INFO] [ui_test] 开始测试: 计划订单搜索
+[2026-06-30 10:11:06] [INFO] [ui_test] 导航到: https://mes.jaka.com/
+[2026-06-30 10:11:36] [ERROR] [ui_test] 测试失败，自动截图: testcases_test_order.py_TestOrder_test_order
+[2026-06-30 10:11:54] [INFO] [ui_test] 截图已保存: /home/runner/work/ui_by_playwright/ui_by_playwright/screenshots/testcases_test_order.py_TestOrder_test_order_20260630_101136.png
