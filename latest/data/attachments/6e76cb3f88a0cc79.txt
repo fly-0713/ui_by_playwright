@@ -1,0 +1,8 @@
+[2026-07-03 09:42:43] [INFO] [ui_test] 开始测试: 自动识别验证码登录
+[2026-07-03 09:42:43] [INFO] [ui_test] 导航到: https://mes.jaka.com/
+[2026-07-03 09:42:57] [INFO] [ui_test] 第 1 次尝试，验证码识别结果: 25vu
+[2026-07-03 09:42:58] [WARNING] [ui_test] 第 1 次登录失败，提示: 输入验证码有误!，刷新重试...
+[2026-07-03 09:42:58] [INFO] [ui_test] 截图已保存: /home/runner/work/ui_by_playwright/ui_by_playwright/screenshots/登录重试第1次失败_20260703_094258.png
+[2026-07-03 09:42:58] [INFO] [ui_test] 第 2 次尝试，验证码识别结果: qxeqf
+[2026-07-03 09:42:59] [INFO] [ui_test] 第 2 次尝试登录成功！当前 URL: https://mes.jaka.com/#/
+[2026-07-03 09:42:59] [INFO] [ui_test] 测试通过: 自动识别验证码登录，已成功进入首页
