@@ -1,0 +1,13 @@
+[2026-07-06 11:12:44] [INFO] [ui_test] 开始测试: 计划订单搜索
+[2026-07-06 11:12:44] [INFO] [ui_test] 导航到: https://mes.jaka.com/
+[2026-07-06 11:12:56] [INFO] [ui_test] 第 1 次尝试，验证码识别结果: 8pdw
+[2026-07-06 11:12:57] [WARNING] [ui_test] 第 1 次登录失败，提示: 输入验证码有误!，刷新重试...
+[2026-07-06 11:12:57] [INFO] [ui_test] 截图已保存: /home/runner/work/ui_by_playwright/ui_by_playwright/screenshots/登录重试第1次失败_20260706_111257.png
+[2026-07-06 11:12:58] [INFO] [ui_test] 第 2 次尝试，验证码识别结果: a8yhz
+[2026-07-06 11:12:58] [INFO] [ui_test] 第 2 次尝试登录成功！当前 URL: https://mes.jaka.com/#/
+[2026-07-06 11:12:58] [INFO] [ui_test] 导航到计划订单页面
+[2026-07-06 11:13:00] [INFO] [ui_test] 已进入计划订单页面, URL: https://mes.jaka.com/#/plan/index
+[2026-07-06 11:13:00] [INFO] [ui_test] 搜索计划编号: test
+[2026-07-06 11:13:03] [INFO] [ui_test] 表头 '计划编号' 在第 5 列
+[2026-07-06 11:13:03] [INFO] [ui_test] 计划编号列表: ['test20260703001']
+[2026-07-06 11:13:03] [INFO] [ui_test] 测试通过: 搜索 'test' 返回 1 条，均包含关键字
