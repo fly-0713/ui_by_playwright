@@ -38,15 +38,21 @@ pipeline {
 
         stage('安装依赖') {
             steps {
-                sh 'python3 -m pip install --upgrade pip'
-                sh 'python3 -m pip install -r requirements-ci.txt'
+                sh '''
+                    python3 -m venv venv
+                    . venv/bin/activate
+                    python -m pip install --upgrade pip
+                    pip install -r requirements-ci.txt
+                '''
             }
         }
 
         stage('安装 Playwright 浏览器及依赖') {
             steps {
-                sh 'python3 -m playwright install chromium'
-                sh 'python3 -m playwright install-deps chromium'
+                sh '''
+                    . venv/bin/activate
+                    python -m playwright install chromium
+                '''
             }
         }
 
@@ -57,7 +63,10 @@ pipeline {
                     if (params.PYTEST_KEYWORD?.trim()) {
                         args = "-k ${params.PYTEST_KEYWORD}"
                     }
-                    sh "python3 ci_run.py ${args}"
+                    sh """
+                        . venv/bin/activate
+                        python ci_run.py ${args}
+                    """
                 }
             }
         }
