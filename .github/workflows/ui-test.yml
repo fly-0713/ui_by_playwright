@@ -11,9 +11,9 @@ on:
       env:
         description: '测试环境'
         required: true
-        default: 'test'
+        default: 'mes'
         type: choice
-        options: [test, staging, production]
+        options: [mes, h5]
       pytest_marks:
         description: 'pytest -m 标记（为空运行全部）'
         required: false
@@ -83,9 +83,11 @@ jobs:
 
       - name: 执行 UI 测试
         env:
-          ENV: ${{ github.event.inputs.env || 'test' }}
-          TEST_USERNAME: ${{ secrets.TEST_USERNAME }}
-          TEST_PASSWORD: ${{ secrets.TEST_PASSWORD }}
+          ENV: ${{ github.event.inputs.env || 'mes' }}
+          MES_USERNAME: ${{ secrets.MES_USERNAME }}
+          MES_PASSWORD: ${{ secrets.MES_PASSWORD }}
+          H5_USERNAME: ${{ secrets.H5_USERNAME }}
+          H5_PASSWORD: ${{ secrets.H5_PASSWORD }}
           ALLURE_CMD: allure
         run: |
           ARGS=()
@@ -162,7 +164,7 @@ jobs:
           EMOJI="✅"
           [ "$STATUS" != "success" ] && EMOJI="❌"
           ENV_NAME="${{ github.event.inputs.env }}"
-          [ -z "$ENV_NAME" ] && ENV_NAME="test"
+          [ -z "$ENV_NAME" ] && ENV_NAME="mes"
           RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
           OWNER=$(echo "${{ github.repository }}" | cut -d'/' -f1)
           REPO=$(echo "${{ github.repository }}" | cut -d'/' -f2)

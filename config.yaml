@@ -1,27 +1,21 @@
 # 多环境配置文件
-# 通过环境变量 ENV 切换：set ENV=staging / set ENV=production
-# 默认使用 test 环境
+# 通过环境变量 ENV 切换：set ENV=mes / set ENV=h5
+# 账号密码通过环境变量注入，本地测试可设置默认值如 ${MES_USERNAME:local_user}
 
-test:
+mes:
   base_url: "https://mes.jaka.com/"
   headless: false
   timeout: 10000
   accounts:
-    - username: "<from-env>"
-      password: "<from-env>"
+    - username: ${MES_USERNAME}
+      password: ${MES_PASSWORD}
 
-staging:
-  base_url: "https://mes-staging.jaka.com/"
+h5:
+  base_url: "https://mes-h5.jaka.com"
   headless: false
   timeout: 10000
   accounts:
-    - username: "<from-env>"
-      password: "<from-env>"
+    - username: ${H5_USERNAME}
+      password: ${H5_PASSWORD}
 
-production:
-  base_url: "https://mes.jaka.com/"
-  headless: true
-  timeout: 15000
-  accounts:
-    - username: "<from-env>"
-      password: "<from-env>"
+

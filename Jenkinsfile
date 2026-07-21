@@ -1,171 +1,87 @@
-// Jenkins Pipeline - Linux Agent
-// 需安装插件: Allure Jenkins Plugin, HTML Publisher, Pipeline, Git Plugin,
-//            Email Extension, Credentials Binding, Build Timeout
-
 pipeline {
-    agent { label 'linux-ui' }
+    agent any
+
+    options {
+        timestamps()
+        buildDiscarder(logRotator(numToKeepStr: '20'))
+    }
 
     parameters {
         choice(
             name: 'ENV',
-            choices: ['test', 'staging', 'production'],
-            description: '目标测试环境'
-        )
-        string(
-            name: 'PYTEST_MARKS',
-            defaultValue: '',
-            description: '运行指定标记的用例，如 smoke（为空则运行全部）'
+            choices: ['mes', 'h5'],
+            description: '运行环境'
         )
         string(
             name: 'PYTEST_KEYWORD',
             defaultValue: '',
-            description: '运行名称包含关键字的用例，如 login（为空则运行全部）'
-        )
-        booleanParam(
-            name: 'NOTIFY',
-            defaultValue: true,
-            description: '是否发送通知'
+            description: 'pytest -k 关键字过滤（为空运行全部）'
         )
     }
 
     environment {
-        ENV           = "${params.ENV}"
-        TEST_USERNAME = credentials('ui-test-username')
-        TEST_PASSWORD = credentials('ui-test-password')
-        ALLURE_CMD    = 'allure'
-        DINGTALK_URL  = credentials('dingtalk-webhook-url')
-        FEISHU_URL    = credentials('feishu-webhook-url')
-    }
-
-    options {
-        timeout(time: 30, unit: 'MINUTES')
-        buildDiscarder(logRotator(numToKeepStr: '30', artifactNumToKeepStr: '10'))
-        disableConcurrentBuilds()
+        ENV = "${params.ENV ?: 'mes'}"
+        MES_USERNAME = credentials('mes-ui-test-username')
+        MES_PASSWORD = credentials('mes-ui-test-password')
+        H5_USERNAME = credentials('mes-ui-test-h5-username')
+        H5_PASSWORD = credentials('mes-ui-test-h5-password')
+        PYTHONUNBUFFERED = '1'
+        ALLURE_CMD = 'allure'
     }
 
     stages {
-
-        stage('环境准备') {
+        stage('检出代码') {
             steps {
-                echo "=== 环境: ${params.ENV} | 构建号: ${BUILD_NUMBER} ==="
-
-                sh '''
-                    python3 -m pip install --upgrade pip --quiet
-                    pip install -r requirements-ci.txt --quiet
-                '''
-
-                sh 'playwright install chromium'
-                sh 'playwright install-deps chromium'
-
-                sh 'allure --version'
+                checkout scm
             }
         }
 
-        stage('执行测试') {
+        stage('安装依赖') {
+            steps {
+                sh 'python3 -m pip install --upgrade pip'
+                sh 'python3 -m pip install -r requirements-ci.txt'
+            }
+        }
+
+        stage('安装 Playwright 浏览器及依赖') {
+            steps {
+                sh 'python3 -m playwright install chromium'
+                sh 'python3 -m playwright install-deps chromium'
+            }
+        }
+
+        stage('执行 UI 测试') {
             steps {
                 script {
-                    def extraArgs = ''
-                    if (params.PYTEST_MARKS?.trim()) {
-                        extraArgs += " -m ${params.PYTEST_MARKS}"
-                    }
+                    def args = ""
                     if (params.PYTEST_KEYWORD?.trim()) {
-                        extraArgs += " -k ${params.PYTEST_KEYWORD}"
+                        args = "-k ${params.PYTEST_KEYWORD}"
                     }
-                    sh "python3 ci_run.py ${extraArgs}"
-                }
-            }
-            post {
-                always {
-                    echo '测试执行完毕，进入归档阶段'
+                    sh "python3 ci_run.py ${args}"
                 }
             }
         }
 
-        stage('归档报告') {
+        stage('生成 Allure 报告') {
             steps {
-                // Allure 报告（需安装 Allure Jenkins Plugin）
-                allure([
-                    includeProperties: false,
-                    jdk              : '',
-                    properties       : [],
-                    reportBuildPolicy: 'ALWAYS',
-                    results          : [[path: 'report/allure_results']]
-                ])
-
-                // pytest-HTML 报告
-                publishHTML(target: [
-                    allowMissing         : true,
-                    alwaysLinkToLastBuild: true,
-                    keepAll              : true,
-                    reportDir            : 'report/html',
-                    reportFiles          : 'report.html',
-                    reportName           : 'pytest-HTML报告',
-                    reportTitles         : ''
-                ])
-
-                // 失败截图 + 日志
-                archiveArtifacts(
-                    artifacts        : 'screenshots/**/*.png, logs/**/*.log',
-                    allowEmptyArchive: true,
-                    fingerprint      : false
-                )
+                sh '''
+                    if command -v allure >/dev/null 2>&1; then
+                        allure generate report/allure_results -o report/allure_report --clean
+                    else
+                        echo "[警告] allure 命令未找到，跳过 Allure 报告生成"
+                    fi
+                '''
             }
         }
     }
 
     post {
         always {
-            script {
-                if (params.NOTIFY) {
-                    def status   = currentBuild.currentResult
-                    def emoji    = status == 'SUCCESS' ? '✅' : '❌'
-                    def duration = currentBuild.durationString
-
-                    // 钉钉通知
-                    def dingMsg = """{
-                      "msgtype": "markdown",
-                      "markdown": {
-                        "title": "UI自动化测试报告",
-                        "text": "## ${emoji} UI自动化测试完成\\n\\n- **环境**: ${params.ENV}\\n- **状态**: ${status}\\n- **耗时**: ${duration}\\n- **构建号**: #${BUILD_NUMBER}\\n- **报告**: [查看Allure报告](${BUILD_URL}allure)\\n- **详情**: [构建日志](${BUILD_URL}console)"
-                      }
-                    }"""
-                    sh "curl -s -X POST '${DINGTALK_URL}' -H 'Content-Type: application/json' -d '${dingMsg}' || true"
-
-                    // 飞书通知
-                    def feishuMsg = """{
-                      "msg_type": "interactive",
-                      "card": {
-                        "header": {
-                          "title": {"tag": "plain_text", "content": "${emoji} UI自动化测试 - ${status}"},
-                          "template": "${status == 'SUCCESS' ? 'green' : 'red'}"
-                        },
-                        "elements": [{
-                          "tag": "div",
-                          "text": {
-                            "tag": "lark_md",
-                            "content": "**环境**: ${params.ENV}\\n**状态**: ${status}\\n**耗时**: ${duration}\\n**构建**: #${BUILD_NUMBER}\\n[查看报告](${BUILD_URL}allure)"
-                          }
-                        }]
-                      }
-                    }"""
-                    sh "curl -s -X POST '${FEISHU_URL}' -H 'Content-Type: application/json' -d '${feishuMsg}' || true"
-                }
-            }
+            archiveArtifacts artifacts: 'report/html/report.html', allowEmptyArchive: true
+            archiveArtifacts artifacts: 'report/allure_report/**', allowEmptyArchive: true
         }
         failure {
-            emailext(
-                subject : "[FAILED] UI自动化测试失败 - ${params.ENV} #${BUILD_NUMBER}",
-                body    : """
-                    <h3>UI自动化测试失败</h3>
-                    <p><b>环境:</b> ${params.ENV}</p>
-                    <p><b>构建号:</b> #${BUILD_NUMBER}</p>
-                    <p><b>耗时:</b> ${currentBuild.durationString}</p>
-                    <p><a href="${BUILD_URL}allure">查看 Allure 报告</a></p>
-                    <p><a href="${BUILD_URL}console">查看构建日志</a></p>
-                """,
-                to      : '${DEFAULT_RECIPIENTS}',
-                mimeType: 'text/html'
-            )
+            archiveArtifacts artifacts: 'screenshots/**', allowEmptyArchive: true
         }
     }
 }

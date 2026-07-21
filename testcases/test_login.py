@@ -6,14 +6,16 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 import pytest
 from playwright.sync_api import Page
 
-from common.config import config
 from common.logger import logger
 from datas.login_data import login_data
 from pages.login_page import LoginPage
 
 
 class TestLogin:
-    """登录测试用例"""
+    """登录测试用例
+
+    MES 账号信息从 config.yaml 的 mes 节点读取，不依赖全局 ENV。
+    """
 
     @pytest.mark.parametrize(
         "data",
@@ -24,7 +26,7 @@ class TestLogin:
         """自动识别验证码登录，失败则重试直到成功"""
         logger.info(f"开始测试: {data['case_name']}")
         login_page = LoginPage(page)
-        login_page.navigate(config.base_url)
+        login_page.navigate(data["base_url"])
 
         success = login_page.login_until_success(
             username=data["username"],
