@@ -61,7 +61,7 @@ pipeline {
                 script {
                     def args = ""
                     if (params.PYTEST_KEYWORD?.trim()) {
-                        args = "-k ${params.PYTEST_KEYWORD}"
+                        args = "-k '${params.PYTEST_KEYWORD}'"
                     }
                     sh """
                         . venv/bin/activate
