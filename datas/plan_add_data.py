@@ -12,7 +12,7 @@ plan_add_data = [
     {
         "case_name": "新增计划订单",
         "material_code": "2002030008",          # 物料编码
-        "quantity": "5",                        # 数量
+        "quantity": "1",                        # 数量
         "plan_no": f"test{_today_str}001",      # 计划编号，如 test20260623001
         "erp_order": "MO001261",                # ERP生产订单
         "start_date_day": _today_day,           # 开始日期：今天
