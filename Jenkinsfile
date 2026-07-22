@@ -105,8 +105,8 @@ pipeline {
                 def payload = """{
     "msgtype": "markdown",
     "markdown": {
-        "title": "UI 自动化测试通知",
-        "text": "### UI 自动化测试通知\\n- **构建编号**: #${env.BUILD_NUMBER}\\n- **项目**: ${env.JOB_NAME}\\n- **环境**: ${envText}\\n- **状态**: ${statusText}\\n- **构建人**: ${buildUser}\\n- **持续时间**: ${duration}\\n- [点击查看构建详情](${env.BUILD_URL})"
+        "title": "UI自动化测试通知",
+        "text": "### UI自动化测试通知\\n- **构建编号**: #${env.BUILD_NUMBER}\\n- **项目**: ${env.JOB_NAME}\\n- **环境**: ${envText}\\n- **状态**: ${statusText}\\n- **构建人**: ${buildUser}\\n- **持续时间**: ${duration}\\n- [点击查看构建详情](${env.BUILD_URL})"
     }
 }"""
 
