@@ -24,11 +24,12 @@ sys.path.insert(0, PROJECT_ROOT)
 ALLURE_RESULTS = os.path.join(PROJECT_ROOT, "report", "allure_results")
 ALLURE_REPORT = os.path.join(PROJECT_ROOT, "report", "allure_report")
 HTML_REPORT = os.path.join(PROJECT_ROOT, "report", "html", "report.html")
+JUNIT_XML = os.path.join(PROJECT_ROOT, "report", "junit.xml")
 
 os.makedirs(ALLURE_RESULTS, exist_ok=True)
 os.makedirs(os.path.dirname(HTML_REPORT), exist_ok=True)
 
-# pytest 参数：强制无头模式 + Allure + HTML 报告
+# pytest 参数：强制无头模式 + Allure + HTML 报告 + JUnit XML
 pytest_args = [
     "testcases/",
     "-v",
@@ -37,6 +38,7 @@ pytest_args = [
     f"--alluredir={ALLURE_RESULTS}",
     f"--html={HTML_REPORT}",
     "--self-contained-html",
+    f"--junitxml={JUNIT_XML}",
 ]
 
 # 支持从命令行透传额外参数（如 -k / -m）

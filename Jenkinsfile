@@ -45,7 +45,7 @@ pipeline {
         stage('清理历史报告') {
             steps {
                 sh '''
-                    rm -rf report/allure_results/* report/allure_report/* report/html/* screenshots/* dingtalk_payload.json
+                    rm -rf report/allure_results/* report/allure_report/* report/html/* report/junit.xml screenshots/* dingtalk_payload.json
                     mkdir -p report/allure_results report/allure_report report/html screenshots
                 '''
             }
@@ -104,6 +104,8 @@ pipeline {
             archiveArtifacts artifacts: 'report/html/report.html', allowEmptyArchive: true
             archiveArtifacts artifacts: 'report/allure_report/**', allowEmptyArchive: true
 
+            junit testResults: 'report/junit.xml', allowEmptyResults: true
+
             allure includeProperties: false, jdk: '', results: [[path: 'report/allure_results']]
 
             script {
@@ -113,11 +115,17 @@ pipeline {
                 def duration = currentBuild.durationString.replace(' and counting', '')
                 def buildUser = env.BUILD_USER ?: '定时触发'
 
+                def testResult = currentBuild.testResultAction
+                def total = testResult ? testResult.totalCount : 0
+                def passed = testResult ? testResult.passCount : 0
+                def failed = testResult ? testResult.failCount : 0
+                def skipped = testResult ? testResult.skipCount : 0
+
                 def payload = """{
     "msgtype": "markdown",
     "markdown": {
         "title": "UI自动化测试通知",
-        "text": "### UI自动化测试通知\\n- **构建编号**: #${env.BUILD_NUMBER}\\n- **项目**: ${env.JOB_NAME}\\n- **环境**: ${envText}\\n- **状态**: ${statusText}\\n- **构建人**: ${buildUser}\\n- **持续时间**: ${duration}\\n- [点击查看构建详情](${env.BUILD_URL})"
+        "text": "### UI自动化测试通知\\n- **构建编号**: #${env.BUILD_NUMBER}\\n- **项目**: ${env.JOB_NAME}\\n- **环境**: ${envText}\\n- **状态**: ${statusText}\\n- **执行**: ${total} 条（成功 ${passed}，失败 ${failed}，跳过 ${skipped}）\\n- **构建人**: ${buildUser}\\n- **持续时间**: ${duration}\\n- [点击查看构建详情](${env.BUILD_URL})"
     }
 }"""
 
