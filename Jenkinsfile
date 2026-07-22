@@ -100,13 +100,24 @@ pipeline {
                 def statusText = status == 'SUCCESS' ? '✅ 成功' : (status == 'FAILURE' ? '❌ 失败' : '⚠️ 不稳定')
                 def envText = params.ENV?.toUpperCase() ?: 'MES'
                 def duration = currentBuild.durationString.replace(' and counting', '')
+                def buildUser = env.BUILD_USER ?: '定时触发'
 
-                sh """
-                    curl -s -X POST \\
-                        "\${DINGTALK_WEBHOOK}" \\
-                        -H "Content-Type: application/json" \\
-                        -d "{\\"msgtype\\":\\"markdown\\",\\"markdown\\":{\\"title\\":\\"UI 自动化测试通知\\",\\"text\\":\\"### UI 自动化测试通知\\\n- **构建编号**: #\${BUILD_NUMBER}\\\n- **项目**: \${JOB_NAME}\\\n- **环境**: ${envText}\\\n- **状态**: ${statusText}\\\n- **构建人**: \${BUILD_USER ?: '定时触发'}\\\n- **持续时间**: ${duration}\\\n- [点击查看构建详情](\${BUILD_URL})\\"}}"
-                """
+                def payload = """{
+    "msgtype": "markdown",
+    "markdown": {
+        "title": "UI 自动化测试通知",
+        "text": "### UI 自动化测试通知\\n- **构建编号**: #${env.BUILD_NUMBER}\\n- **项目**: ${env.JOB_NAME}\\n- **环境**: ${envText}\\n- **状态**: ${statusText}\\n- **构建人**: ${buildUser}\\n- **持续时间**: ${duration}\\n- [点击查看构建详情](${env.BUILD_URL})"
+    }
+}"""
+
+                writeFile file: 'dingtalk_payload.json', text: payload
+
+                sh '''
+                    curl -s -X POST \
+                        "${DINGTALK_WEBHOOK}" \
+                        -H "Content-Type: application/json" \
+                        -d @dingtalk_payload.json
+                '''
             }
         }
         failure {
