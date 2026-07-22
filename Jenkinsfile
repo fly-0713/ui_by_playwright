@@ -79,13 +79,13 @@ pipeline {
 
         stage('生成 Allure 报告') {
             steps {
-                sh '''
-                    if command -v allure >/dev/null 2>&1; then
-                        allure generate report/allure_results -o report/allure_report --clean
-                    else
-                        echo "[警告] allure 命令未找到，跳过 Allure 报告生成"
-                    fi
-                '''
+                allure([
+                    includeProperties: false,
+                    jdk: '',
+                    properties: [],
+                    reportBuildPolicy: 'ALWAYS',
+                    results: [[path: 'report/allure_results']]
+                ])
             }
         }
     }
