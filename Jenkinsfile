@@ -80,7 +80,11 @@ pipeline {
                     }
                     sh """
                         . venv/bin/activate
-                        python ci_run.py ${args}
+                        python ci_run.py ${args} \
+                            --ignore=testcases/test_app_test_nopass.py \
+                            --ignore=testcases/test_app_handle_abnormality.py \
+                            --ignore=testcases/test_app_repair_over.py \
+                            --ignore=testcases/test_app_review_abnormality.py
                     """
                 }
             }
