@@ -45,6 +45,18 @@ def pytest_collection_modifyitems(items):
     items.sort(key=sort_key)
 
 
+@pytest.hookimpl(tryfirst=True)
+def pytest_runtest_setup(item):
+    """为 Allure suite 标签添加执行序号前缀，使 Suites 视图按执行顺序排列"""
+    filename = os.path.basename(item.fspath)
+    if filename in TEST_FILE_ORDER:
+        order = TEST_FILE_ORDER.index(filename) + 1
+        suite_name = f"{order:02d}_{filename[:-3]}"
+    else:
+        suite_name = filename[:-3]
+    allure.dynamic.label("suite", suite_name)
+
+
 def pytest_addoption(parser):
     parser.addoption(
         "--headless",
