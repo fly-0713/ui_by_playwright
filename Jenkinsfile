@@ -115,11 +115,24 @@ pipeline {
                 def duration = currentBuild.durationString.replace(' and counting', '')
                 def buildUser = env.BUILD_USER ?: '定时触发'
 
-                def testResult = currentBuild.testResultAction
-                def total = testResult ? testResult.totalCount : 0
-                def passed = testResult ? testResult.passCount : 0
-                def failed = testResult ? testResult.failCount : 0
-                def skipped = testResult ? testResult.skipCount : 0
+                def junitFile = 'report/junit.xml'
+                def total = 0
+                def passed = 0
+                def failed = 0
+                def skipped = 0
+
+                if (fileExists(junitFile)) {
+                    def content = readFile(junitFile)
+                    def testsMatcher = content =~ /tests="(\d+)"/
+                    def failuresMatcher = content =~ /failures="(\d+)"/
+                    def errorsMatcher = content =~ /errors="(\d+)"/
+                    def skippedMatcher = content =~ /skipped="(\d+)"/
+
+                    total = testsMatcher ? testsMatcher[0][1].toInteger() : 0
+                    failed = (failuresMatcher ? failuresMatcher[0][1].toInteger() : 0) + (errorsMatcher ? errorsMatcher[0][1].toInteger() : 0)
+                    skipped = skippedMatcher ? skippedMatcher[0][1].toInteger() : 0
+                    passed = total - failed - skipped
+                }
 
                 def payload = """{
     "msgtype": "markdown",
