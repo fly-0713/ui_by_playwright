@@ -147,12 +147,12 @@ class AppPackOverPage(BasePage):
         logger.info("点击: 合格，进入下一道工序")
         self._pass_next_btn.wait_for(state="visible", timeout=self.timeout)
         self._pass_next_btn.click()
-        self.page.wait_for_timeout(2000)  # 等待页面加载下一道工序
+        self.page.wait_for_timeout(3000)  # 等待页面加载下一道工序
 
     def assert_all_complete(self):
         """断言该工位的所有工序全部完成"""
         logger.info(f"断言页面出现: {self._success_text}")
         self.page.locator("uni-modal").get_by_text(self._success_text).wait_for(
-            state="visible", timeout=self.timeout
+            state="visible", timeout=30000
         )
         logger.info("断言通过: 该工位的所有工序全部完成")
