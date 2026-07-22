@@ -12,6 +12,6 @@ app_test_pass_data = [
         "username": _h5_login["username"],
         "password": _h5_login["password"],
         # station_code 和 serial_number 由 test_order_detail 写入 shared_data
-        "image_path": "datas\\picture111.jpg",   # 上传图片路径（相对于项目根目录）
+        "image_path": "datas/picture111.jpg",   # 上传图片路径（相对于项目根目录）
     },
 ]

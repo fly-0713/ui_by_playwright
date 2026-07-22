@@ -14,6 +14,6 @@ app_production_data = [
         # station_code 和 serial_number 由 test_order_detail 写入 shared_data.json，
         # 运行时从 shared_data.json 读取，此处不再硬编码
         "quantity": "2",                          # 完工数量
-        "image_path": "datas\\picture111.jpg",   # 上传图片路径（相对于项目根目录）
+        "image_path": "datas/picture111.jpg",   # 上传图片路径（相对于项目根目录）
     },
 ]

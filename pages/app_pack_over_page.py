@@ -119,6 +119,7 @@ class AppPackOverPage(BasePage):
             index: 上传输入框索引
         """
         # 如果是相对路径，转换为绝对路径
+        image_path = os.path.normpath(image_path)
         if not os.path.isabs(image_path):
             abs_path = os.path.join(
                 os.path.dirname(os.path.dirname(os.path.abspath(__file__))),

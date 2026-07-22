@@ -101,6 +101,7 @@ class AppProductionPage(BasePage):
 
         # 图片上传
         if image_path:
+            image_path = os.path.normpath(image_path)
             abs_path = os.path.join(
                 os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
                 image_path,
