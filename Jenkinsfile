@@ -42,6 +42,15 @@ pipeline {
             }
         }
 
+        stage('清理历史报告') {
+            steps {
+                sh '''
+                    rm -rf report/allure_results/* report/allure_report/* report/html/* screenshots/* dingtalk_payload.json
+                    mkdir -p report/allure_results report/allure_report report/html screenshots
+                '''
+            }
+        }
+
         stage('安装依赖') {
             steps {
                 sh '''
