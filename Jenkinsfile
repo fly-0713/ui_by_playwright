@@ -6,6 +6,11 @@ pipeline {
         buildDiscarder(logRotator(numToKeepStr: '20'))
     }
 
+    triggers {
+        // 每天北京时间 10:00 自动构建（UTC 02:00）
+        cron('H 2 * * *')
+    }
+
     parameters {
         choice(
             name: 'ENV',
@@ -25,6 +30,7 @@ pipeline {
         MES_PASSWORD = credentials('mes-ui-test-password')
         H5_USERNAME = credentials('mes-ui-test-h5-username')
         H5_PASSWORD = credentials('mes-ui-test-h5-password')
+        DINGTALK_WEBHOOK = credentials('dingtalk-webhook')
         PYTHONUNBUFFERED = '1'
         ALLURE_CMD = 'allure'
     }
@@ -88,6 +94,20 @@ pipeline {
         always {
             archiveArtifacts artifacts: 'report/html/report.html', allowEmptyArchive: true
             archiveArtifacts artifacts: 'report/allure_report/**', allowEmptyArchive: true
+
+            script {
+                def status = currentBuild.currentResult
+                def statusText = status == 'SUCCESS' ? '✅ 成功' : (status == 'FAILURE' ? '❌ 失败' : '⚠️ 不稳定')
+                def envText = params.ENV?.toUpperCase() ?: 'MES'
+                def duration = currentBuild.durationString.replace(' and counting', '')
+
+                sh """
+                    curl -s -X POST \\
+                        "\${DINGTALK_WEBHOOK}" \\
+                        -H "Content-Type: application/json" \\
+                        -d "{\\"msgtype\\":\\"markdown\\",\\"markdown\\":{\\"title\\":\\"UI 自动化测试通知\\",\\"text\\":\\"### UI 自动化测试通知\\\n- **构建编号**: #\${BUILD_NUMBER}\\\n- **项目**: \${JOB_NAME}\\\n- **环境**: ${envText}\\\n- **状态**: ${statusText}\\\n- **构建人**: \${BUILD_USER ?: '定时触发'}\\\n- **持续时间**: ${duration}\\\n- [点击查看构建详情](\${BUILD_URL})\\"}}"
+                """
+            }
         }
         failure {
             archiveArtifacts artifacts: 'screenshots/**', allowEmptyArchive: true
