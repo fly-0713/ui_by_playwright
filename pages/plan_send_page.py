@@ -19,8 +19,8 @@ class PlanSendPage(BasePage):
         self._input_plan_no = page.get_by_placeholder("计划编号")
         self._btn_search = page.get_by_role("button", name="搜索")
 
-        # 下发弹窗字段
-        self._btn_send_quantity = page.get_by_placeholder("下发数量")
+        # 下发弹窗字段（placeholder 可能是"下发数量"或"请输入下发数量"等）
+        self._btn_send_quantity = page.locator("input[placeholder*='下发数量']")
         self._btn_confirm = page.get_by_role("button", name="确认")
 
     def navigate_to_order(self):
@@ -41,12 +41,10 @@ class PlanSendPage(BasePage):
 
     def click_send(self):
         """点击列表中第一条记录的下发按钮"""
-        # 先等待表格有数据
-        self.page.locator(".el-table__body-wrapper tbody tr").first.wait_for(
-            state="visible", timeout=self.timeout
-        )
-        # 使用更通用的文本定位，不限定元素类型
-        send_link = self.page.get_by_text("下发").first
+        # 先等待表格有数据，并在第一行内定位下发按钮
+        first_row = self.page.locator(".el-table__body-wrapper tbody tr").first
+        first_row.wait_for(state="visible", timeout=self.timeout)
+        send_link = first_row.get_by_text("下发").first
         send_link.wait_for(state="visible", timeout=self.timeout)
         send_link.click()
         logger.info("已点击下发按钮")
