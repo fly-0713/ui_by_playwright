@@ -71,7 +71,7 @@ def _create_logger(name: str = "ui_test") -> logging.Logger:
     log_filename = f"test_{datetime.now().strftime('%Y%m%d')}.log"
     file_handler = logging.FileHandler(
         os.path.join(LOG_DIR, log_filename),
-        encoding="utf-8",
+        encoding="utf-8-sig",  # 带 BOM，Jenkins 浏览器打开时可正确识别中文
     )
     file_handler.setLevel(logging.DEBUG)
     file_handler.setFormatter(logging.Formatter(LOG_FORMAT, DATE_FORMAT))
