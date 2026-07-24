@@ -6,10 +6,6 @@ pipeline {
         buildDiscarder(logRotator(numToKeepStr: '20'))
     }
 
-    triggers {
-        // 每天北京时间 8:00 自动构建
-        cron('0 8 * * *')
-    }
 
     parameters {
         choice(
