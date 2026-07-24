@@ -41,7 +41,12 @@ class PlanSendPage(BasePage):
 
     def click_send(self):
         """点击列表中第一条记录的下发按钮"""
-        send_link = self.page.locator("a").filter(has_text="下发").first
+        # 先等待表格有数据
+        self.page.locator(".el-table__body-wrapper tbody tr").first.wait_for(
+            state="visible", timeout=self.timeout
+        )
+        # 使用更通用的文本定位，不限定元素类型
+        send_link = self.page.get_by_text("下发").first
         send_link.wait_for(state="visible", timeout=self.timeout)
         send_link.click()
         logger.info("已点击下发按钮")
