@@ -41,7 +41,7 @@ pipeline {
         stage('清理历史报告') {
             steps {
                 sh '''
-                    rm -rf report/allure_results/* report/allure_report/* report/html/* report/junit.xml screenshots/* dingtalk_payload.json
+                    rm -rf report/allure_results/* report/allure_report/* report/html/* report/junit.xml screenshots/* dingtalk_payload.json datas/shared_data.json
                     mkdir -p report/allure_results report/allure_report report/html screenshots
                 '''
             }
