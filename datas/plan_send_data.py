@@ -2,17 +2,18 @@
 
 from datetime import datetime, timedelta
 
-from common.test_data_helper import get_plan_no
-
 _today = datetime.now()
 _end = _today + timedelta(days=7)       # 结束日期 = 今天 + 7 天
 _today_day = str(_today.day)            # 开始日期数字，如 "23"
 _end_day = str(_end.day)                # 结束日期数字，如 "30"
+_today_str = _today.strftime("%Y%m%d")  # 如 "20260724"
+_time_str = _today.strftime("%H%M%S")   # 如 "111413"
 
 plan_send_data = [
     {
         "case_name": "计划下发",
-        "plan_no": get_plan_no(),           # 与 plan_add_data 保持一致，从 shared_data 获取
+        # 默认 fallback；实际运行时 test_plan_send.py 会从 shared_data 读取 plan_add 写入的 plan_no
+        "plan_no": f"test{_today_str}{_time_str}",
         "send_quantity": "1",               # 下发数量
         "start_date_day": _today_day,       # 排程开始日期：今天
         "end_date_day": _end_day,           # 排程结束日期：今天 + 7 天

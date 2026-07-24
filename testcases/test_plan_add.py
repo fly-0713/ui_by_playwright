@@ -8,6 +8,7 @@ from playwright.sync_api import Page
 
 from common.config import config
 from common.logger import logger
+from common.shared_data import shared_data
 from datas.plan_add_data import plan_add_data
 from pages.login_page import LoginPage
 from pages.plan_add_page import PlanAddPage
@@ -53,4 +54,8 @@ class TestPlanAdd:
         assert case["plan_no"] in plan_nos, (
             f"新增计划编号 '{case['plan_no']}' 未出现在列表中，实际列表: {plan_nos}"
         )
+
+        # 5. 将新增成功的计划编号写入共享数据，供后续用例使用
+        shared_data.set("plan_no", case["plan_no"])
+
         logger.info(f"测试通过: 计划编号 '{case['plan_no']}' 已成功新增并出现在列表中")

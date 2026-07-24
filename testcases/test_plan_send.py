@@ -8,6 +8,7 @@ from playwright.sync_api import Page
 
 from common.config import config
 from common.logger import logger
+from common.shared_data import shared_data
 from datas.plan_send_data import plan_send_data
 from pages.login_page import LoginPage
 from pages.plan_send_page import PlanSendPage
@@ -24,6 +25,10 @@ class TestPlanSend:
     def test_plan_send(self, page: Page, case: dict):
         """登录后搜索计划编号，执行下发，验证状态变为下发中"""
         logger.info(f"开始测试: {case['case_name']}")
+
+        # 从 shared_data 读取 plan_add 用例写入的计划编号，实现跨用例共享
+        case["plan_no"] = shared_data.get("plan_no", case["plan_no"])
+        logger.info(f"使用计划编号: {case['plan_no']}")
 
         # 1. 登录
         login_page = LoginPage(page)
