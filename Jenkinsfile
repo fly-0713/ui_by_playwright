@@ -7,8 +7,8 @@ pipeline {
     }
 
     triggers {
-        // 每天北京时间 8:00 自动构建
-        // cron('0 8 * * *')
+        // 每天北京时间 10:00 自动构建（UTC 02:00）
+        cron('H 2 * * *')
     }
 
     parameters {
