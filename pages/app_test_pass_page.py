@@ -143,12 +143,23 @@ class AppTestPassPage(BasePage):
         file_chooser.set_files(abs_path)
         self.page.wait_for_timeout(1000)
 
+    def _wait_for_loading_disappear(self, timeout: int = 30000):
+        """等待页面加载动画消失"""
+        loading = self.page.get_by_text("加载中")
+        try:
+            loading.wait_for(state="hidden", timeout=timeout)
+            logger.info("加载动画已消失")
+        except Exception:
+            logger.info("未检测到加载动画，继续执行")
+
     def pass_and_next(self):
         """点击通过，进入下一道工序"""
         logger.info("点击: 通过，进入下一道工序")
         self._pass_next_btn.wait_for(state="visible", timeout=self.timeout)
         self._pass_next_btn.click()
-        self.page.wait_for_timeout(1000)
+        # 等待加载动画消失，避免后续断言时页面仍在加载
+        self._wait_for_loading_disappear(timeout=30000)
+        self.page.wait_for_timeout(500)
 
     def select_ok(self):
         """选择 OK 选项"""
@@ -159,7 +170,9 @@ class AppTestPassPage(BasePage):
     def assert_tested(self):
         """断言页面出现"已测试" """
         logger.info(f"断言页面出现: {self._success_text}")
+        # 先等加载动画消失，再用较长超时断言目标文本
+        self._wait_for_loading_disappear(timeout=30000)
         self.page.locator("uni-page-body").get_by_text(self._success_text).wait_for(
-            state="visible", timeout=self.timeout
+            state="visible", timeout=30000
         )
         logger.info("断言通过: 检测完成，已测试")
