@@ -6,7 +6,6 @@ pipeline {
         buildDiscarder(logRotator(numToKeepStr: '20'))
     }
 
-
     parameters {
         choice(
             name: 'ENV',
@@ -34,7 +33,59 @@ pipeline {
     stages {
         stage('检出代码') {
             steps {
-                checkout scm
+                script {
+                    // 添加重试机制，解决间歇性Git连接问题
+                    def maxRetries = 3
+                    def success = false
+                    def retryDelay = 15 // 秒
+                    
+                    for (int attempt = 1; attempt <= maxRetries; attempt++) {
+                        try {
+                            echo "Git检出尝试 ${attempt}/${maxRetries}"
+                            
+                            // 清理可能损坏的.git目录
+                            if (attempt > 1) {
+                                sh 'rm -rf .git'
+                            }
+                            
+                            checkout([
+                                $class: 'GitSCM',
+                                branches: [[name: env.GIT_BRANCH ?: 'main']],
+                                extensions: [
+                                    // 增加超时时间到10分钟
+                                    [$class: 'CloneOption', 
+                                     timeout: 600,
+                                     depth: 1,
+                                     shallow: true,
+                                     noTags: true,
+                                     reference: ''  // 不使用本地引用
+                                    ]
+                                ],
+                                userRemoteConfigs: [[
+                                    url: 'https://github.com/fly-0713/ui_by_playwright.git',
+                                    // 如果有GitHub Token凭证，取消注释下面一行并配置credentialsId
+                                    credentialsId: '12b50794-6de5-445a-9d93-9de2aa66fa94'
+                                ]]
+                            ])
+                            
+                            success = true
+                            echo "Git检出成功"
+                            break
+                            
+                        } catch (Exception e) {
+                            echo "Git检出失败 (尝试 ${attempt}/${maxRetries}): ${e.getMessage()}"
+                            
+                            if (attempt < maxRetries) {
+                                echo "等待 ${retryDelay} 秒后重试..."
+                                sleep time: retryDelay, unit: 'SECONDS'
+                                // 指数退避，每次重试增加等待时间
+                                retryDelay = retryDelay * 2
+                            } else {
+                                error "Git检出失败，已尝试 ${maxRetries} 次，请检查网络或GitHub服务状态"
+                            }
+                        }
+                    }
+                }
             }
         }
 
