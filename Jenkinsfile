@@ -64,7 +64,7 @@ pipeline {
                                 userRemoteConfigs: [[
                                     url: 'https://github.com/fly-0713/ui_by_playwright.git',
                                     // 如果有GitHub Token凭证，取消注释下面一行并配置credentialsId
-                                    credentialsId: '12b50794-6de5-445a-9d93-9de2aa66fa94'
+                                    credentialsId: 'github-token'
                                 ]]
                             ])
                             
