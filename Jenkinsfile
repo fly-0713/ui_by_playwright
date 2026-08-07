@@ -1,7 +1,4 @@
-// 在文件最上方导入 SmartRetry 类
-import org.jenkinsci.plugins.smartretry.SmartRetry
-
-// 使用 smartRetry 包裹整个 pipeline
+// 删除 import 行，直接使用 smartRetry
 smartRetry {
     pipeline {
         agent any
